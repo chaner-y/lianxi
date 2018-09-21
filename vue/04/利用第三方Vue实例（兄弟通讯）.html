@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <link rel=stylesheet href="../css/bootstrap.css">
+</head>
+<body>
+    <div id="app" class="container">
+        <nav-a></nav-a>
+        <br><br>
+        <nav-b></nav-b>
+    </div>
+</body>
+<script src="../lib/vue.js"></script>
+<script type="text/javascript">
+    /*
+            06组件通讯（兄弟组件通信）：组件就是一个Vue实例
+
+                * A -> 父 -> B
+                * 利用第三方实例实现数据传递
+                    * 接收方：自定义事件
+                        NavB
+                    * 传输方：$emit()
+                        NavA
+                * VueX
+     */
+    //利用第三方实例实现数据传递
+    let qiao = new Vue();
+    //自定义事件froma
+    qiao.$on('froma',function(val){
+        console.log(val);
+        vm.$children[1].$emit('getdata',val);
+    });
+
+    let vm = new Vue({
+        el:'#app',
+        components:{
+            navA:{
+                data(){
+                    return{
+                        name:'NavA',
+                        msg:'my name is laoxie , 我来自NavA'
+                    }
+                },
+                template:`<div>
+                    <p>{{name}}</p>
+                    <button class="btn btn-success" @click="toB">点击传递数据到navB</button>
+                </div>`,
+                methods:{
+                    toB(){
+                        qiao.$emit('froma',this.msg);
+                    }
+                }
+            },
+            navB:{
+                data(){
+                    return {
+                        name:'NavB',
+                        msg:''
+                    }
+                },
+                template:`<div>
+                    <p>{{name}}</p>
+                    <h4>msg:{{msg}}</h4>
+                    <button class="btn btn-danger">点击传递数据到navA</button>
+                </div>`
+            }
+        }
+    });
+    vm.$children[1].$on('getdata',function(val){
+        console.log(val);
+        vm.$children[1].$data.msg = val;
+    });
+</script>
+</html>

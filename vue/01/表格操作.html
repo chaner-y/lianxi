@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no">
+    <title>表格操作</title>
+    <link rel=stylesheet href="../css/bootstrap.css">
+    <style type="text/css">
+        .table{
+            width:1111px;
+            margin:10px auto;
+            border:1px solid #Eee;
+        }
+        th label{
+           margin:0;
+        } 
+        td img{
+            height:30px;
+            width:50px;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <table class="table">
+            <thead>
+                 <tr>
+                    <th><label><input type="checkbox" v-model = "selectAll"/>全选</label></th>
+                    <th>#</th>
+                    <th>商品名称</th>
+                    <th>商品分类</th>
+                    <th>商品图片</th>
+                    <th @click="sortCommon('price')">商品原价</th>
+                    <th @click="sortCommon('off')">折扣价</th>
+                    <th @click="sortCommon('star')">星级评价</th>
+                    <th @click="sortCommon('commentCount')">评价数量</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="(goods,idx) in goodslist" @click="selectRow(goods.id)">
+                    <td><input type="checkbox" v-model = "checkModel" :value = "goods.id"></td>
+                    <td>{{idx+1}}</td>
+                    <td><a v-bind:href="goods.url">{{goods.title}}</a></td>
+                    <td>{{goods.category}}</td>
+                    <td><img v-bind:src="goods.imgurl"></td>
+                    <td>{{goods.price}}</td>
+                    <td>{{(goods.price*goods.off).toFixed(2)}}</td>
+                    <td>{{goods.star}}</td>
+                    <td>{{goods.commentCount}}</td>
+                    <td>
+                        <div class="btn-group btn-group-sm">
+                            <button class="btn btn-primary"@click="copy(idx)">复制</button>
+                            <button class="btn btn-light" v-on:click = remove(idx)>删除</button>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {{checkModel}}
+    </div>
+</body>
+<script src="../lib/vue.js"></script>
+<script type="text/javascript">
+    let goodslist = [
+        {
+            "id":"G001",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/161.jpg",
+            "url":"#",
+            "price":899,
+            "off":0.2,
+            "star":4,
+            "commentCount":10002
+        },
+        {
+            "id":"G002",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/162.jpg",
+            "url":"#",
+            "price":698,
+            "off":0.2,
+            "star":6,
+            "commentCount":1024
+        },
+        {
+            "id":"G003",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/163.jpg",
+            "url":"#",
+            "price":398,
+            "off":0.2,
+            "star":4,
+            "commentCount":10546
+        },
+        {
+            "id":"G004",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/164.jpg",
+            "url":"#",
+            "price":198,
+            "off":0.2,
+            "star":5,
+            "commentCount":102
+        },
+        {
+            "id":"G005",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/165.jpg",
+            "url":"#",
+            "price":198,
+            "off":0.2,
+            "star":1,
+            "commentCount":1002
+        },
+        {
+            "id":"G006",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/166.jpg",
+            "url":"#",
+            "price":6998,
+            "off":0.2,
+            "star":4,
+            "commentCount":1028
+        },
+        {
+            "id":"G007",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/167.jpg",
+            "url":"#",
+            "price":3998,
+            "off":0.2,
+            "star":4,
+            "commentCount":10002
+        },
+        {
+            "id":"G008",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/168.jpg",
+            "url":"#",
+            "price":698,
+            "off":0.2,
+            "star":4,
+            "commentCount":10002
+        },
+        {
+            "id":"G009",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/169.jpg",
+            "url":"#",
+            "price":1998,
+            "off":0.2,
+            "star":4,
+            "commentCount":10002
+        },
+        {
+            "id":"G0010",
+            "title":"Thermos 膳魔师 Funtainer系列水杯 12盎司（340g） 粉红色",
+            "category":"shoes",
+            "imgurl":"img/160.jpg",
+            "url":"#",
+            "price":2998,
+            "off":0.2,
+            "star":4,
+            "commentCount":10002
+        }
+    ];
+    let VM = new Vue({
+        el:'#app',
+        data:{
+            // checkedAll:'',
+            //选中的行
+            checkModel:[],
+            goodslist,
+            sort:{
+                type:false,
+                order:'price'
+            }
+        },
+        // watch:{
+        //     checkModel:{
+        //         handler(){
+        //             if(this.checkModel.length == this.goodslist.length){
+        //                 this.checkedAll = true;
+        //             }else{
+        //                 this.checkedAll = false;
+        //             }
+        //         }
+        //         // deep:true
+        //     }
+        // },
+        computed:{
+            selectAll:{
+                get(){
+                    return this.goodslist.every(item=>this.checkModel.indexOf(item.id)>0);
+                },
+                set(val){
+                    //val:true,false
+                    //给selects添加所有商品id
+                    if(val){
+                        //全选
+                        this.checkModel = this.goodslist.map(item=>item.id);
+                    }else{
+                        //取消
+                        this.checkModel = [];
+                    }
+                }
+            }
+        },
+        methods:{
+                //删除行
+                remove(idx){
+                    this.goodslist.splice(idx,1);
+                },
+                //复制行
+                copy(idx){
+                    this.goodslist.push(this.goodslist[idx]);
+                },
+            //     changeState(){
+            //         // this.checkModel=[];
+            //         // if(this.checkedAll==true){
+            //         //     this.goodslist.forEach((value,index)=>{
+            //         //             this.checkModel.push(value.id);
+            //         //     });
+            //         console.log(this.checkedAll);
+                         
+            //         if(!this.checkedAll){
+            //             this.checkModel=[];
+            //             return;
+            //         }
+            //         this.goodslist.forEach(item=>this.checkModel.push(item.id));
+            //     }
+            // },
+            selectRow(id){
+                let idx = this.checkModel.indexOf(id);
+                if(idx>=0){
+                    this.checkModel.splice(idx,1);//存在就取消掉
+                }else{
+                    this.checkModel.push(id);
+                }
+            },
+            sortPrice(){
+                this.goodslist.sort((a,b)=>{
+                    return a.price - b.price
+                });
+            },
+            sortCommon(type){
+            this.$set(this.sort,'type',!this.sort.type);
+            this.$set(this.sort,'order',type);
+            this.goodslist.sort((a,b)=>{
+            let c = 0;
+            if(this.sort.type){
+            if(this.sort.order==="off"){//折扣价排序比较特殊
+            c = (a.off*a.price)-(b.off*b.price);
+            }else{
+            c = (a[this.sort.order])-(b[this.sort.order]);
+            }
+            }else{
+            if(this.sort.order==="off"){//折扣价排序比较特殊
+            c = (b.off*b.price)-(a.off*a.price);
+            }else{
+            c = (b[this.sort.order])-(a[this.sort.order]);
+            }
+            }
+            return c ;
+            });
+
+            }
+        }
+            // mounted(){
+            //         console.log(this.checkedAll);
+
+            // }
+    })
+</script>
+</html>

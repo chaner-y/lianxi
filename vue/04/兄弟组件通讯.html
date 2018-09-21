@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>兄弟组件</title>
+    <link rel=stylesheet href="../css/bootstrap.css">
+</head>
+<body>
+    <div id="app" class="container">
+        <h1>兄弟组件通讯</h1>
+        <nav-a @getdata="toB"  ></nav-a>
+        <br/><br/>
+        <nav-b :data="data"></nav-b>
+    </div>
+    
+</body>
+<script src="../lib/vue.js"></script>
+<script type="text/javascript">
+    /*
+            兄弟组件通讯：组件就是一个Vue实例
+             *A->父->B
+             *利用第三方实例实现数据传递
+                *接收方：自定义事件
+                *传输方：$emit（） 
+     */
+    
+    //A->父->B
+    let vm = new Vue({
+        el:'#app',
+        data:{
+            username:'laoxie',
+            data:'',
+        },
+
+        components:{
+            navA:{
+                data(){
+                    return {
+                        name:'NavA',
+                        msg:'来自a的数据'
+                    }
+                },
+                template:`<div>
+                    <p>{{name}}</p>
+                    <button class="btn btn-success" @click="toComponentB">点击传递数据到navB</button>
+                </div>`,
+                methods:{
+                    toComponentB(){
+                        //触发自定义事件getdata
+                        console.log(666);
+                        this.$emit('getdata',this.msg);
+                    }
+                }
+            },
+            navB:{
+                data(){
+                    return {name:'NavB',msg:'来自b的数据'}
+                },
+                props:['data'],
+                template:`
+                    <div>
+                        <p>{{name}}</p>
+                        <h4>data:{{data}}</h4>
+                        <button class="btn btn-danger">点击传递数据到navA</button>   
+                    </div>
+               `
+            }
+        },
+        methods:{
+            toB(val){
+                //val为接收组件a的数据
+                this.data = val;
+            },
+        }
+    });
+</script>
+</html>

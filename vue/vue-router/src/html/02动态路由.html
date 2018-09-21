@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>动态路由</title>
+    <link rel="stylesheet" href="../lib/bootstrap/bootstrap.css">
+</head>
+<body>
+    <div id="app" class="container">
+        <h1>02动态路由</h1>
+        <div class="nav nav-tabs">
+            <router-link class="nav-link" :to="tab.link" v-for="tab in tabs" exact-active-class="active">
+                {{tab.text}}
+            </router-link>
+            <router-link class="nav-link" to="/user" active-class="active">用户</router-link>
+        </div>
+        <router-view></router-view>
+    </div>
+</body>
+<script src="../lib/vue.js"></script>
+<script src="../lib/vue-router.js"></script>
+<script>
+    		let Home = {
+			template:`<div>
+				<h4>首页内容</h4>
+			</div>`
+		}
+
+		let List = {
+			template:`<div>
+				<h4>列表内容</h4>
+			</div>`
+		}
+
+		let Goods = {
+			template:`<div>
+				<h4>商品详情</h4>
+			</div>`
+		}
+
+		let Cart = {
+			template:`<div>
+				<h4>购物车</h4>
+			</div>`
+        }
+        
+        let User = {
+            props:['username','id','myname','nickname','a','b'],
+            template:`
+                <div>
+                    <h4>用户管理</h4>
+                    <p>{{$route.params}}</p>
+                    <p>$route.parmas：{{$route.params.username}} - {{$route.params.id}}</p>
+                    <p>组件传参：{{username}} - {{id}}</p>
+                    <p>{{myname}} - {{nickname}}</p>
+                    <p>a{{a}} - b：{{b}}</p>
+                </div>
+            `
+        }
+
+        let routes = [
+			{
+				path:'/',
+				component:Home
+			},
+			{
+				path:'/list',
+				component:List
+			},
+			{
+				path:'/goods',
+				component:Goods
+			},
+			{
+				path:'/cart',
+				component:Cart
+            },
+            //动态路由
+            {
+                path:'user/:username/:id',
+                component:User,
+                //自动绑定$route.params下的所有属性
+                props:true
+                //props为对象，一般用户静态数字能够传输
+                //props:{myname:'东哥',nickname:'东东'}
+                
+                //props为函数
+                //props:function(route){
+                //    console.log(route)
+                //   return Object.assign({},route.params,route.query);
+                //}
+            }
+        ];
+        //实例化路由对象
+        let router = new VueRouter({
+            //路由配置
+            routes
+        });
+
+		let vm = new Vue({
+			el:'#app',
+			data:{
+				tabs:[{
+					text:'Home',
+					link:'/'
+				},{
+					text:'List',
+					link:'list'
+				},{
+					text:'Goods',
+					link:'goods'
+				},{
+					text:'Cart',
+					link:'cart'
+				}]
+			},
+			router
+		})
+</script>
+</html>

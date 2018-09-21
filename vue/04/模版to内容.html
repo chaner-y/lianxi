@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <link src="../css/bootstrap.css"></link>
+</head>
+<body>
+    <h1>组件通讯（模版to内容）</h1>
+    <div id="app">
+        <h4>私人订制</h4>
+        <mynav>
+            <div class="btn-group" slot-scope="props">
+                <button class="btn btn-success" v-for="item in props.items">{{item}}</button>
+            </div>
+        </mynav>
+
+        <h4>默认组件</h4>
+        <mynav></mynav>
+    
+
+        <div id="nav">
+            <div>
+            <!-- slot传参 -->
+                <slot :items="navs" username="laoxie">
+                    <ul>
+                        <li v-for="item in navs">{{item}}</li>
+                    </ul>
+                </slot>
+            </div>
+        </div>
+    </div>
+</body>
+<script src="../lib/vue.js"></script>
+<script type="text/javascript">
+    /*
+    
+        组件通讯（模版to内容）
+            组件所在的区域会被template中的内容替换
+            内容传输：
+                内容->模版
+                    默认插槽：插槽<slot></slot>
+                        用于存放组件内容
+                    具名插槽：精确显示某一个部分内容
+                模版->内容:
+                    作用域插槽：slot-scope
+
+    */
+   Vue.component('mynav',{
+    data(){
+        return {
+            navs:['首页','发现','我的']
+        }
+    },
+    template:'#nav'
+   })
+
+   let vm = new Vue({
+        el:'#app'
+   });
+</script>
+</html>

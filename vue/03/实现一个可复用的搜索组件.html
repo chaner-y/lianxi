@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Document</title>
+    <link rel=stylesheet href="../css/bootstrap.css">
+    <style type="text/css">
+        .box{
+            width: 400px;
+            /*height: 200px;*/
+            margin: 50px auto;
+            border:1px solid #ccc;
+            border-radius:5px;
+            padding:10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app" class="box">
+        <div class="container">
+            <my-search :currword="kw" @psend="get"></my-search>
+
+        </div>
+    </div>
+</body>
+<script src="../lib/vue.js"></script>
+<script type="text/javascript">
+    Vue.component('MySearch',{
+        props:['currword'],
+        data:function(){
+            return {
+                kw:'',
+            }
+        },
+        methods:{
+            //oninput触发该函数
+            send(){
+                //向父组件传递参数
+                this.$emit('psend',this.kw);
+            }
+        },
+        template:`
+            <div class="input-group">
+                <input type="text" class="form-control" v-model="kw" @input="send"/>
+                <div class="input-group-append">
+                    <button class="btn btn-success">搜索</button>
+                </div>
+            </div>
+        `
+    });
+
+    //搜索提示内容组件
+    Vue.component('searchlist',{
+        //获取父组件传递过来的数据
+        //currdata:jsonp请求后得到的数据
+        props:['currdata'],
+        //currentid:当前列选中的项高亮
+        //url：跳转的连接
+        data(){
+            return {
+                currentid:0,
+                url:'#',
+            }
+        },
+        methods:{
+            //选中那一项
+            select(id){
+                this.currentid = id;
+            },
+
+        },
+        template:`
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action" v-for="(data,idx) in currdata.cons" :class="{active:currentid===idx}" @click.prevent="select(idx)" @dblclick="letgo(idx)">
+                    {{data}}
+                </a>
+            </div>
+        `
+    });
+    let vm = new Vue({
+        el:'#app',
+        data:{
+            kw:'',
+            lists:{url:'https://www.baidu.com/s?wd=',cons:[]},
+        },
+        methods:{
+            get(val){
+                this.kw = val;
+                this.$http.jsonp("https://sp0.baidu.com/5a1Fazu8AA54nxGko9WTAnF6hhy/su?",{
+                    //参数值==关键字
+                    params:{wd:this.kw},
+                    jsonp:'cb'
+                }).then(function(res){
+                    this.lists.cons = res.data.s;
+                },function(res){
+                    console.log(res);
+                });
+            }
+        }
+    });
+</script>
+</html>
